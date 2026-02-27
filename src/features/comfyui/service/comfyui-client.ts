@@ -1,5 +1,5 @@
 import { createWriteStream, existsSync, readdirSync, statSync, unlinkSync, mkdirSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join, basename, dirname } from 'node:path';
 import { homedir } from 'node:os';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
@@ -21,7 +21,21 @@ const HF_API_BASE = 'https://huggingface.co/api';
 
 const DIFFUSION_EXTENSIONS = new Set(['.safetensors', '.ckpt', '.pt', '.pth', '.bin']);
 
+const buildPortablePaths = (): string[] => {
+  const paths: string[] = [];
+
+  const appImagePath = process.env['APPIMAGE'];
+  if (appImagePath) {
+    paths.push(join(dirname(appImagePath), 'ComfyUI'));
+  }
+
+  paths.push(join(process.cwd(), 'ComfyUI'));
+
+  return paths;
+};
+
 const COMMON_COMFYUI_PATHS = [
+  ...buildPortablePaths(),
   join(homedir(), 'ComfyUI'),
   join(homedir(), 'comfyui'),
   join(homedir(), '.comfyui'),

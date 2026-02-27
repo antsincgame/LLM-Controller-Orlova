@@ -10,7 +10,7 @@
     "dev:mcp": "tsx src/index.ts",
     "start": "electron .",
     "dev": "tsc && electron .",
-    "dist": "tsc && electron-builder --linux AppImage",
+    "dist": "tsc && electron-builder --linux AppImage --publish never",
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": ["mcp", "ollama", "huggingface", "llm", "comfyui", "diffusion", "electron"],
