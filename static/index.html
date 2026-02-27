@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>LLM Controller Orlova</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 40 40" width="32" height="32">
+          <rect width="40" height="40" rx="8" fill="var(--accent)"/>
+          <text x="20" y="28" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">L</text>
+        </svg>
+        <span class="sidebar-title">Orlova</span>
+      </div>
+
+      <div class="sidebar-nav">
+        <button class="nav-btn active" data-tab="search">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Поиск</span>
+        </button>
+        <button class="nav-btn" data-tab="local">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+          <span>Модели</span>
+        </button>
+        <button class="nav-btn" data-tab="diffusion">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <span>Изображения</span>
+        </button>
+        <button class="nav-btn" data-tab="disk">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+          <span>Диски</span>
+        </button>
+        <button class="nav-btn" data-tab="settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Настройки</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="status-dot" id="ollama-status"></div>
+        <span class="status-text" id="ollama-status-text">Ollama</span>
+      </div>
+    </nav>
+
+    <main class="content">
+      <!-- SEARCH TAB -->
+      <section class="tab-section active" data-section="search">
+        <div class="section-header">
+          <h1>Поиск GGUF-моделей</h1>
+          <p class="section-sub">Hugging Face — только совместимые с Ollama</p>
+        </div>
+
+        <form id="search-form" class="search-bar">
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="search-query" placeholder="qwen coder, llama instruct, deepseek..." autocomplete="off">
+          </div>
+          <div class="search-filters">
+            <select id="search-sort">
+              <option value="downloads">По загрузкам</option>
+              <option value="likes">По лайкам</option>
+              <option value="lastModified">По дате</option>
+            </select>
+            <select id="search-quant">
+              <option value="Q4">Q4+</option>
+              <option value="Q3">Q3+</option>
+              <option value="Q5">Q5+</option>
+              <option value="Q6">Q6+</option>
+              <option value="Q8">Q8+</option>
+              <option value="Q2">Все</option>
+            </select>
+            <input type="text" id="search-author" placeholder="Автор..." class="filter-input">
+            <button type="submit" class="btn btn-primary">Найти</button>
+            <button type="button" id="rank-btn" class="btn btn-secondary" disabled>Ранжировать</button>
+          </div>
+        </form>
+
+        <div id="search-results" class="card-grid">
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <p>Введите запрос для поиска моделей</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOCAL MODELS TAB -->
+      <section class="tab-section" data-section="local">
+        <div class="section-header">
+          <h1>Установленные модели</h1>
+          <button id="refresh-local" class="btn btn-secondary">Обновить</button>
+        </div>
+        <div id="local-models" class="model-list">
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <p>Загрузка списка моделей...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIFFUSION TAB -->
+      <section class="tab-section" data-section="diffusion">
+        <div class="section-header">
+          <h1>Diffusion-модели</h1>
+          <p class="section-sub">ComfyUI — checkpoints, LoRA, VAE, ControlNet</p>
+        </div>
+
+        <form id="diffusion-search-form" class="search-bar">
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="diffusion-query" placeholder="stable diffusion, flux, sdxl..." autocomplete="off">
+          </div>
+          <div class="search-filters">
+            <select id="diffusion-type">
+              <option value="checkpoint">Checkpoint</option>
+              <option value="lora">LoRA</option>
+              <option value="vae">VAE</option>
+              <option value="controlnet">ControlNet</option>
+              <option value="upscaler">Upscaler</option>
+            </select>
+            <select id="diffusion-sort">
+              <option value="downloads">По загрузкам</option>
+              <option value="likes">По лайкам</option>
+              <option value="lastModified">По дате</option>
+            </select>
+            <input type="text" id="diffusion-author" placeholder="Автор..." class="filter-input">
+            <button type="submit" class="btn btn-primary">Найти</button>
+          </div>
+        </form>
+
+        <div class="diffusion-tabs">
+          <button class="btn btn-secondary btn-sm diffusion-sub active" data-sub="search-results">Результаты</button>
+          <button class="btn btn-secondary btn-sm diffusion-sub" data-sub="installed">Установленные</button>
+        </div>
+
+        <div id="diffusion-search-results" class="card-grid diffusion-panel active"></div>
+        <div id="diffusion-installed" class="model-list diffusion-panel" hidden></div>
+      </section>
+
+      <!-- DISK TAB -->
+      <section class="tab-section" data-section="disk">
+        <div class="section-header">
+          <h1>Дисковое пространство</h1>
+          <button id="refresh-disk" class="btn btn-secondary">Обновить</button>
+        </div>
+        <div id="disk-info" class="disk-list"></div>
+      </section>
+
+      <!-- SETTINGS TAB -->
+      <section class="tab-section" data-section="settings">
+        <div class="section-header">
+          <h1>Настройки</h1>
+        </div>
+        <form id="settings-form" class="settings-grid">
+          <div class="setting-group">
+            <label for="cfg-hf-token">HF Token</label>
+            <input type="password" id="cfg-hf-token" placeholder="hf_..." autocomplete="off">
+            <p class="setting-hint">Для доступа к gated-моделям (Llama, Gemma)</p>
+          </div>
+          <div class="setting-group">
+            <label for="cfg-ollama-host">Ollama Host</label>
+            <input type="text" id="cfg-ollama-host" placeholder="http://127.0.0.1:11434">
+          </div>
+          <div class="setting-group">
+            <label for="cfg-models-path">Путь к моделям</label>
+            <input type="text" id="cfg-models-path" placeholder="~/.ollama/models">
+            <p class="setting-hint">Абсолютный путь для хранения моделей</p>
+          </div>
+          <div class="setting-group">
+            <label for="cfg-comfyui-path">Путь к ComfyUI</label>
+            <div class="setting-row">
+              <input type="text" id="cfg-comfyui-path" placeholder="/home/user/ComfyUI">
+              <button type="button" id="detect-comfyui-btn" class="btn btn-secondary btn-sm">Найти</button>
+            </div>
+            <p class="setting-hint">Директория с main.py и models/</p>
+          </div>
+          <div class="setting-group">
+            <label for="cfg-cache-ttl">Кэш HF API (мин)</label>
+            <input type="number" id="cfg-cache-ttl" min="1" max="120" value="15">
+          </div>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- PULL PROGRESS MODAL -->
+  <div id="pull-modal" class="modal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <h2 id="pull-modal-title">Загрузка модели</h2>
+      <p id="pull-modal-status" class="pull-status">Подготовка...</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="pull-progress-bar"></div>
+      </div>
+      <span class="progress-pct" id="pull-progress-pct">0%</span>
+      <button id="pull-cancel-btn" class="btn btn-danger">Отменить</button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notifications" class="notifications"></div>
+
+  <!-- DIFFUSION DOWNLOAD MODAL -->
+  <div id="diffusion-modal" class="modal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <h2 id="diffusion-modal-title">Загрузка модели</h2>
+      <p id="diffusion-modal-status" class="pull-status">Подготовка...</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="diffusion-progress-bar"></div>
+      </div>
+      <span class="progress-pct" id="diffusion-progress-pct">0%</span>
+      <button id="diffusion-cancel-btn" class="btn btn-danger">Отменить</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

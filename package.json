@@ -1,0 +1,29 @@
+{
+  "name": "llm-controller-orlova",
+  "version": "1.0.0",
+  "description": "MCP server + GUI for managing local LLMs and diffusion models: search on Hugging Face, rank, pull via Ollama, manage ComfyUI models",
+  "type": "module",
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start:mcp": "node dist/index.js",
+    "dev:mcp": "tsx src/index.ts",
+    "start": "electron .",
+    "dev": "tsc && electron .",
+    "dist": "tsc && electron-builder --linux AppImage",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": ["mcp", "ollama", "huggingface", "llm", "comfyui", "diffusion", "electron"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.25.28"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
